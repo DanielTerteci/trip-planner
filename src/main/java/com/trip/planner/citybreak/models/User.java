@@ -1,8 +1,10 @@
 package com.trip.planner.citybreak.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.hibernate.annotations.processing.Pattern;
 
 @Data
 @Entity
@@ -22,10 +24,11 @@ public class User {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-//    @Size(min = 8, message = "Password must be at least 8 characters long")
-//    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[!@#$%^&*()-_=+{};:',<.>/?]).*$",
-//            message = "Password must contain at least one capital letter and one symbol")
-//    @NotBlank
+    @Size(min = 8, message = "Password must be at least 8 characters long")
+    @Pattern(
+            regexp = "^(?=.*[A-Z])(?=.*[!@#$%^&*()-_=+{};:',<.>/?]).*$",
+            message = "Password must contain at least one capital letter and one symbol")
+    @NotBlank
     private String password;
 
     @Column(name = "firstName", nullable = false)

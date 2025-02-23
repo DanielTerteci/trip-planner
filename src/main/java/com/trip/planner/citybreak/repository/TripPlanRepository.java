@@ -12,6 +12,8 @@ import java.util.List;
 public interface TripPlanRepository extends JpaRepository<TripPlan, Long> {
     List<TripPlan> findByUserId(Long userId);
 
+    List<TripPlan> findByDestinationId(Long destinationId);
+
     @Query("SELECT t FROM TripPlan t WHERE t.budget <= :maxBudget")
     List<TripPlan> findTripsByMaxBudget(@Param("maxBudget") Double maxBudget);
 }
