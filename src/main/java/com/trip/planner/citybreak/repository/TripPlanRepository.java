@@ -1,19 +1,25 @@
 package com.trip.planner.citybreak.repository;
 
 import com.trip.planner.citybreak.models.TripPlan;
+import org.springframework.cglib.core.Local;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
 public interface TripPlanRepository extends JpaRepository<TripPlan, Long> {
-    List<TripPlan> findByUserId(Long userId);
+    List<TripPlan> findByStartDateBetween(LocalDate startDate, Local endDate);
 
-    List<TripPlan> findByDestinationId(Long destinationId);
+    List<TripPlan> findByDestination_CityName(Long destinationId);
 
-    @Query("SELECT t FROM TripPlan t WHERE t.budget <= :maxBudget")
-    List<TripPlan> findTripsByMaxBudget(@Param("maxBudget") Double maxBudget);
+    List<TripPlan> findByBudgetBetween(BigDecimal minBudget, BigDecimal maxBudget);
+
+    List<TripPlan> findByAttraction_Type(String type);
+
+    List<TripPlan> findByAttractionsPerDay(int maxAttractionsPerDay);
 }

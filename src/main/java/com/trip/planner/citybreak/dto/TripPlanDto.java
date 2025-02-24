@@ -1,5 +1,6 @@
 package com.trip.planner.citybreak.dto;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -20,4 +21,7 @@ public class TripPlanDto {
     private List<Long> attractions;
     private LocalDate startDate;
     private LocalDate endDate;
+    private BigDecimal budget;
+    private int maxAttractionsPerDay;
+    private String attractionType;
 }

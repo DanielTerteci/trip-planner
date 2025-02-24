@@ -3,6 +3,7 @@ package com.trip.planner.citybreak.models;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -36,4 +37,7 @@ public class TripPlan {
 
     @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
+
+    @Column(name = "min_budget", nullable = false)
+    private BigDecimal minBudget;
 }
