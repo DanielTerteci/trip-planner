@@ -46,7 +46,7 @@ public class UserService {
 
     private boolean isValidPassword(String password) {
         return password != null &&
-                password.length() <= 8 &&
+                password.length() >= 8 &&
                 password.matches(".*[A-Z].*") &&
                 password.matches(".*[!@#$%^&*(){}:;.,/~'<>]");
     }
