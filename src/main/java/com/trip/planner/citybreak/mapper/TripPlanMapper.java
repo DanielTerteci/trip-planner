@@ -15,6 +15,16 @@ public class TripPlanMapper {
                 .id(tripPlan.getId())
                 .userId(tripPlan.getUser().getId())
                 .destinationId(tripPlan.getDestination().getId())
+                .attractionIds(tripPlan.getAttractions()
+                        .stream()
+                        .map(Attraction::getId)
+                        .collect(Collectors.toList()))
+                .startDate(tripPlan.getStartDate())
+                .endDate(tripPlan.getEndDate())
+                .minBudget(tripPlan.getMinBudget())
+                .maxBudget(tripPlan.getMaxBudget())
+                .maxAttractionsPerDay(tripPlan.getMaxAttractionsPerDay())
+                .attractionType(tripPlan.getAttractionType())
                 .build();
     }
 
@@ -23,6 +33,13 @@ public class TripPlanMapper {
                 .id(tripPlanDto.getId())
                 .user(user)
                 .destination(destination)
+                .attractions(attractions)
+                .startDate(tripPlanDto.getStartDate())
+                .endDate(tripPlanDto.getEndDate())
+                .minBudget(tripPlanDto.getMinBudget())
+                .maxBudget(tripPlanDto.getMaxBudget())
+                .maxAttractionsPerDay(tripPlanDto.getMaxAttractionsPerDay())
+                .attractionType(tripPlanDto.getAttractionType())
                 .build();
     }
 }

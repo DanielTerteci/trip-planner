@@ -3,6 +3,8 @@ package com.trip.planner.citybreak.models;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Data
 @Entity
 @Builder

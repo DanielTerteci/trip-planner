@@ -37,4 +37,18 @@ public class TripPlanService {
                 .map(TripPlanMapper::mapToTripPlanDto)
                 .collect(Collectors.toList());
     }
+
+    public List<TripPlanDto> getTripPlansByCity(String cityName) {
+        return tripPlanRepository.findByDestination_CityName(cityName)
+                .stream()
+                .map(TripPlanMapper::mapToTripPlanDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<TripPlanDto> getTripPlansByDuration(int minDays, int maxDays) {
+        return tripPlanRepository.findByDurationBetween(minDays, maxDays)
+                .stream()
+                .map(TripPlanMapper::mapToTripPlanDto)
+                .collect(Collectors.toList());
+    }
 }

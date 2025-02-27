@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 @Entity
 @Builder
-@Table(name = "trip_plans")
+@Table(name = "trip_plan")
 @NoArgsConstructor
 @AllArgsConstructor
 public class TripPlan {
@@ -27,10 +27,13 @@ public class TripPlan {
     @JoinColumn(name = "destination_id", nullable = false)
     private Destination destination;
 
-    @ElementCollection
-    @CollectionTable(name = "trip_plan_attractions", joinColumns = @JoinColumn(name = "trip_plan_id"))
-    @Column(name = "attraction_id")
-    private List<Attraction> attraction;
+    @ManyToMany
+    @JoinTable(
+            name = "trip_plan_attractions",
+            joinColumns = @JoinColumn(name = "trip_plan_id"),
+            inverseJoinColumns = @JoinColumn(name = "attraction_id")
+    )
+    private List<Attraction> attractions;
 
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
@@ -40,4 +43,13 @@ public class TripPlan {
 
     @Column(name = "min_budget", nullable = false)
     private BigDecimal minBudget;
+
+    @Column(name = "max_budget", nullable = false)
+    private BigDecimal maxBudget;
+
+    @Column(name = "max_attractions_per_day", nullable = false)
+    private int maxAttractionsPerDay;
+
+    @Column(name = "attraction_type", nullable = false)
+    private String attractionType;
 }

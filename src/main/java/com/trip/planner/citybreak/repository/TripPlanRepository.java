@@ -13,13 +13,13 @@ import java.util.List;
 
 @Repository
 public interface TripPlanRepository extends JpaRepository<TripPlan, Long> {
-    List<TripPlan> findByStartDateBetween(LocalDate startDate, Local endDate);
-
-    List<TripPlan> findByDestination_CityName(Long destinationId);
+    List<TripPlan> findByDestination_CityName(String cityName);
 
     List<TripPlan> findByBudgetBetween(BigDecimal minBudget, BigDecimal maxBudget);
 
     List<TripPlan> findByAttraction_Type(String type);
 
     List<TripPlan> findByAttractionsPerDay(int maxAttractionsPerDay);
+    List<TripPlan> findByDurationBetween(int minDays, int maxDays);
+
 }

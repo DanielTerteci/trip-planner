@@ -14,14 +14,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TripPlanDto {
-    private static final long serialVersionUID = 1L;
     private Long id;
     private Long userId;
     private Long destinationId;
-    private List<Long> attractions;
+    private List<Long> attractionIds;
     private LocalDate startDate;
     private LocalDate endDate;
-    private BigDecimal budget;
+    private BigDecimal minBudget;
+    private BigDecimal maxBudget;
     private int maxAttractionsPerDay;
     private String attractionType;
 }
