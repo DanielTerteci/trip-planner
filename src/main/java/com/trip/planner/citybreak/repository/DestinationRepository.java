@@ -11,7 +11,5 @@ import java.util.Optional;
 public interface DestinationRepository extends JpaRepository<Destination, Long> {
     List<Destination> findByCityName(String name);
 
-    List<Destination> findByNameContaining(String name);
-
-    List<Destination> findByCountry(String country);
+    List<Destination> findByCountryName(String country);
 }

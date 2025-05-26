@@ -6,6 +6,7 @@ import com.trip.planner.citybreak.repository.TripPlanRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,14 +19,14 @@ public class TripPlanService {
     }
 
     public List<TripPlanDto> getTripPlansByBudget(BigDecimal minBudget, BigDecimal maxBudget) {
-        return tripPlanRepository.findByBudgetBetween(minBudget, maxBudget)
+        return tripPlanRepository.findByMinBudgetBetween(minBudget, maxBudget)
                 .stream()
                 .map(TripPlanMapper::mapToTripPlanDto)
                 .collect(Collectors.toList());
     }
 
     public List<TripPlanDto> getTripPlansByAttractionType(String type) {
-        return tripPlanRepository.findByAttraction_Type(type)
+        return tripPlanRepository.findByAttractions_Type(type)
                 .stream()
                 .map(TripPlanMapper::mapToTripPlanDto)
                 .collect(Collectors.toList());
@@ -45,8 +46,8 @@ public class TripPlanService {
                 .collect(Collectors.toList());
     }
 
-    public List<TripPlanDto> getTripPlansByDuration(int minDays, int maxDays) {
-        return tripPlanRepository.findByDurationBetween(minDays, maxDays)
+    public List<TripPlanDto> getTripPlansByDuration(LocalDate minDays, LocalDate maxDays) {
+        return tripPlanRepository.findByStartDateBetween(minDays, maxDays)
                 .stream()
                 .map(TripPlanMapper::mapToTripPlanDto)
                 .collect(Collectors.toList());

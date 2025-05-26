@@ -15,11 +15,11 @@ import java.util.List;
 public interface TripPlanRepository extends JpaRepository<TripPlan, Long> {
     List<TripPlan> findByDestination_CityName(String cityName);
 
-    List<TripPlan> findByBudgetBetween(BigDecimal minBudget, BigDecimal maxBudget);
+    List<TripPlan> findByMinBudgetBetween(BigDecimal minBudget, BigDecimal maxBudget);
 
-    List<TripPlan> findByAttraction_Type(String type);
+    List<TripPlan> findByAttractions_Type(String type);
 
     List<TripPlan> findByAttractionsPerDay(int maxAttractionsPerDay);
-    List<TripPlan> findByDurationBetween(int minDays, int maxDays);
+    List<TripPlan> findByStartDateBetween(LocalDate minDays, LocalDate maxDays);
 
 }

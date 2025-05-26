@@ -37,7 +37,7 @@ public class DestinationService {
     }
 
     public List<DestinationDto> getDestinationsByCountry(String country) {
-        List<Destination> destinations = destinationRepository.findByCountry(country);
+        List<Destination> destinations = destinationRepository.findByCountryName(country);
         return destinations.stream().map(DestinationMapper::mapToDestinationDto).collect(Collectors.toList());
     }
 

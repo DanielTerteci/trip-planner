@@ -32,4 +32,11 @@ public class Attraction {
 
     @Column(name = "location")
     private String location;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
+
+    @Column(name = "per_day")
+    private int perDay;
 }
