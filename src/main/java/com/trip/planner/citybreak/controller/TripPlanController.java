@@ -27,13 +27,13 @@ public class TripPlanController {
         }
     }
 
-    @GetMapping
+    @GetMapping("/getAllTripPlans")
     public ResponseEntity<List<TripPlanDto>> getAllTripPlans() {
         List<TripPlanDto> tripPlans = tripPlanService.getAllTripPlans();
         return ResponseEntity.ok(tripPlans);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/getById/{id}")
     public ResponseEntity<TripPlanDto> getTripPlanById(@PathVariable Long id) {
         try {
             TripPlanDto tripPlan = tripPlanService.getTripPlanById(id);
@@ -49,7 +49,7 @@ public class TripPlanController {
         return ResponseEntity.ok(tripPlans);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<TripPlanDto> updateTripPlan(
             @PathVariable Long id,
             @RequestBody TripPlanDto tripPlanDto) {
@@ -73,7 +73,7 @@ public class TripPlanController {
         }
     }
 
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteTripPlan(@PathVariable Long id) {
         try {
             tripPlanService.deleteTripPlan(id);

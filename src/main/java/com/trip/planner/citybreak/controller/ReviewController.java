@@ -27,13 +27,13 @@ public class ReviewController {
         }
     }
 
-    @GetMapping
+    @GetMapping("/getAllReviews")
     public ResponseEntity<List<ReviewDto>> getAllReviews() {
         List<ReviewDto> reviews = reviewService.getAllReviews();
         return ResponseEntity.ok(reviews);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/getById/{id}")
     public ResponseEntity<ReviewDto> getReviewById(@PathVariable Long id) {
         try {
             ReviewDto review = reviewService.getReviewById(id);
@@ -55,7 +55,7 @@ public class ReviewController {
         return ResponseEntity.ok(reviews);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<ReviewDto> updateReview(
             @PathVariable Long id,
             @RequestBody ReviewDto reviewDto) {
@@ -67,7 +67,7 @@ public class ReviewController {
         }
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteReview(@PathVariable Long id) {
         try {
             reviewService.deleteReview(id);

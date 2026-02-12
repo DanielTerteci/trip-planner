@@ -23,13 +23,13 @@ public class DestinationController {
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
-    @GetMapping
+    @GetMapping("/getAllDestinations")
     public ResponseEntity<List<DestinationDto>> getAllDestinations() {
         List<DestinationDto> destinations = destinationService.getAllDestinations();
         return ResponseEntity.ok(destinations);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/getById/{id}")
     public ResponseEntity<DestinationDto> getDestinationById(@PathVariable Long id) {
         try {
             DestinationDto destination = destinationService.getDestinationById(id);
@@ -51,7 +51,7 @@ public class DestinationController {
         return ResponseEntity.ok(destinations);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<DestinationDto> updateDestination(
             @PathVariable Long id,
             @RequestBody DestinationDto destinationDto) {
@@ -63,7 +63,7 @@ public class DestinationController {
         }
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteDestination(@PathVariable Long id) {
         try {
             destinationService.deleteDestination(id);

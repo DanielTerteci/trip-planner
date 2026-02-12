@@ -29,13 +29,13 @@ public class AttractionController {
         }
     }
 
-    @GetMapping
+    @GetMapping("/getAllAttractions")
     public ResponseEntity<List<AttractionDto>> getAllAttractions() {
         List<AttractionDto> attractions = attractionService.getAllAttractions();
         return ResponseEntity.ok(attractions);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/getById/{id}")
     public ResponseEntity<AttractionDto> getAttractionById(@PathVariable Long id) {
         try {
             AttractionDto attraction = attractionService.getAttractionById(id);
@@ -57,7 +57,7 @@ public class AttractionController {
         return ResponseEntity.ok(attractions);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<AttractionDto> updateAttraction(
             @PathVariable Long id,
             @RequestBody AttractionDto attractionDto) {
@@ -69,7 +69,7 @@ public class AttractionController {
         }
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteAttraction(@PathVariable Long id) {
         try {
             attractionService.deleteAttraction(id);
