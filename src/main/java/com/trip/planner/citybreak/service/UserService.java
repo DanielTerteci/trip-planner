@@ -5,105 +5,116 @@ import com.trip.planner.citybreak.dto.UserDto;
 import com.trip.planner.citybreak.mapper.UserMapper;
 import com.trip.planner.citybreak.models.User;
 import com.trip.planner.citybreak.repository.UserRepository;
-import com.trip.planner.citybreak.security.AuthResponse;
-import com.trip.planner.citybreak.security.JwtTokenProvider;
-import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    public final JwtTokenProvider jwtTokenProvider;
+    private final UserMapper userMapper;
 
-    @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtTokenProvider = jwtTokenProvider;
-    }
+    // Password validation pattern: minimum 8 characters and at least 2 special characters
+    private static final Pattern SPECIAL_CHAR_PATTERN = Pattern.compile("[!@#$%^&*()\\-_=+\\[\\]{};:'\",.<>/?\\\\|`~]");
 
     @Transactional
-    public UserDto registerUser(RegisterDto registerDto){
-        if(!isValidPassword(registerDto.getPassword())) {
-            throw new IllegalArgumentException("Password must contain at least 8 characters, one uppercase letter and one special character.");
-        }
-        if(userRepository.findByEmail(registerDto.getEmail()).isPresent()){
-            throw new IllegalArgumentException("Email is already in use.");
+    public UserDto registerUser(RegisterDto registerDto) {
+        // Validate passwords match
+        if (!registerDto.getPassword().equals(registerDto.getConfirmPassword())) {
+            throw new RuntimeException("Passwords do not match");
         }
 
-        String hashedPassword = passwordEncoder.encode(registerDto.getPassword());
+        // Validate password length (minimum 8 characters)
+        if (registerDto.getPassword().length() < 8) {
+            throw new RuntimeException("Password must be at least 8 characters long");
+        }
+
+        // Validate password has at least 2 special characters
+        long specialCharCount = registerDto.getPassword().chars()
+                .filter(c -> SPECIAL_CHAR_PATTERN.matcher(String.valueOf((char) c)).matches())
+                .count();
+
+        if (specialCharCount < 2) {
+            throw new RuntimeException("Password must contain at least 2 special characters (!@#$%^&*()-_=+[]{}; etc.)");
+        }
+
+        // Check if email exists
+        if (userRepository.existsByEmail(registerDto.getEmail())) {
+            throw new RuntimeException("Email already exists");
+        }
 
         User user = User.builder()
-                .username(registerDto.getUsername())
                 .email(registerDto.getEmail())
                 .password(passwordEncoder.encode(registerDto.getPassword()))
                 .firstName(registerDto.getFirstName())
                 .lastName(registerDto.getLastName())
-                .role("USER")
+                .subscriptionPlan(User.SubscriptionPlan.BASIC)
+                .role(User.UserRole.USER)
+                .createdAt(LocalDateTime.now())
                 .build();
 
         User savedUser = userRepository.save(user);
-        System.out.println("User created successfully!");
-        return UserMapper.mapToUserDto(savedUser);
+        return userMapper.toDto(savedUser);
     }
-
-    private boolean isValidPassword(String password) {
-        return password != null &&
-                password.length() >= 8 &&
-                password.matches(".*[A-Z].*") &&
-                password.matches(".*[!@#$%^&*(){}:;.,/~'<>]");
-    }
-
-    //METHOD TO CREATE USER BY ADMIN
-//    @Transactional
-//    public UserDto createUser(UserDto userDto) {
-//        if(userRepository.findByEmail(userDto.getEmail()).isPresent()){
-//            throw new IllegalArgumentException("Email already in use.");
-//        }
-//        User user = UserMapper.mapToUser(userDto);
-//        User savedUser = userRepository.save(user);
-//        return UserMapper.mapToUserDto(savedUser);
-//    }
-
-    public AuthResponse login(String username, String password) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid username or password."));
-
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new IllegalArgumentException("Invalid username or password.");
-        }
-
-        String token = jwtTokenProvider.generateToken(String.valueOf(user.getId()), user.getUsername());
-        System.out.println("Login successfully: " + token);
-        return new AuthResponse(token);
-    }
-
 
     public UserDto getUserById(Long id) {
-        return userRepository.findById(id)
-                .map(UserMapper::mapToUserDto)
-                .orElse(null);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+        return userMapper.toDto(user);
     }
 
     public UserDto getUserByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .map(UserMapper::mapToUserDto)
-                .orElse(null);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
+        return userMapper.toDto(user);
     }
 
     public List<UserDto> getAllUsers() {
         return userRepository.findAll().stream()
-                .map(UserMapper::mapToUserDto)
+                .map(userMapper::toDto)
                 .collect(Collectors.toList());
     }
 
+    @Transactional
+    public UserDto upgradeToPro(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setSubscriptionPlan(User.SubscriptionPlan.PRO);
+        user.setSubscriptionExpiry(LocalDateTime.now().plusMonths(1)); // 1 month subscription
+        user.setUpdatedAt(LocalDateTime.now());
+
+        User updated = userRepository.save(user);
+        return userMapper.toDto(updated);
+    }
+
+    @Transactional
+    public UserDto updateUser(Long id, UserDto userDto) {
+        User existing = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        existing.setFirstName(userDto.getFirstName());
+        existing.setLastName(userDto.getLastName());
+        existing.setUpdatedAt(LocalDateTime.now());
+
+        User updated = userRepository.save(existing);
+        return userMapper.toDto(updated);
+    }
+
+    @Transactional
     public void deleteUser(Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new RuntimeException("User not found");
+        }
         userRepository.deleteById(id);
     }
 }

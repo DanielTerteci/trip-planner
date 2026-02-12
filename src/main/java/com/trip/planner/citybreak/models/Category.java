@@ -27,11 +27,11 @@ public class Category {
     @Column(name = "description")
     private String description;
 
-    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
-    private List<Attraction> attractions;
-
     @Min(value = 1, message = "Popularity must be between 1 and 5.")
     @Max(value = 5, message = "Popularity must be between 1 and 5.")
     @Column(nullable = false)
     private int popularity;
+
+    // Examples: BEACH, ADVENTURE, CULTURAL, LUXURY, BUDGET, FAMILY, ROMANTIC
+
 }

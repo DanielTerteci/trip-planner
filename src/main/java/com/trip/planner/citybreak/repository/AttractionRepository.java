@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface AttractionRepository extends JpaRepository<Attraction, Long> {
     List<Attraction> findByDestinationId(Long destinationId);
-    List<Attraction> findByName(String name);
+    List<Attraction> findByType(Attraction.AttractionType type);
 }

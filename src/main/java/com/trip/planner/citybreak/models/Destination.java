@@ -1,12 +1,15 @@
 package com.trip.planner.citybreak.models;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import java.util.ArrayList;
+import java.util.List;
 
-@Data
 @Entity
-@Builder
 @Table(name = "destinations")
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Destination {
@@ -15,15 +18,34 @@ public class Destination {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "destination_name", nullable = false)
-    private String destinationName;
+    @Column(nullable = false)
+    private String name;
 
-    @Column(name = "city_name", nullable = false)
-    private String cityName;
+    @Column(nullable = false)
+    private String country;
 
-    @Column(name = "country_name", nullable = false)
-    private String countryName;
+    @Column(nullable = false)
+    private String city;
 
-    @Column(name = "description")
+    private String region;
+
+    @Column(length = 2000)
     private String description;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
+
+    @OneToMany(mappedBy = "destination", cascade = CascadeType.ALL)
+    private List<Attraction> attractions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "destination", cascade = CascadeType.ALL)
+    private List<Review> reviews = new ArrayList<>();
+
+    private Double averageRating;
+
+    private Integer reviewCount = 0;
+
+    @Column(nullable = false)
+    private Boolean isActive = true;
 }

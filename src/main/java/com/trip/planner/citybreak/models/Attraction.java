@@ -1,14 +1,14 @@
 package com.trip.planner.citybreak.models;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import java.math.BigDecimal;
 
-import java.util.List;
-
-@Data
 @Entity
-@Builder
 @Table(name = "attractions")
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Attraction {
@@ -17,26 +17,29 @@ public class Attraction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", nullable = false)
+    @Column(nullable = false)
     private String name;
-
-    @Column(name = "description")
-    private String description;
-
-    @Column(name = "type")
-    private String type;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "destination_id", nullable = false)
     private Destination destination;
 
-    @Column(name = "location")
-    private String location;
+    @Column(length = 2000)
+    private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "category_id", nullable = false)
-    private Category category;
+    private BigDecimal entryFee;
 
-    @Column(name = "per_day")
-    private int perDay;
+    @Enumerated(EnumType.STRING)
+    private AttractionType type;
+
+    private String website;
+
+    private String openingHours;
+
+    private Double rating;
+
+    public enum AttractionType {
+        MUSEUM, PARK, RESTAURANT, LANDMARK, ENTERTAINMENT,
+        SHOPPING, BEACH, HISTORICAL, RELIGIOUS, NATURE
+    }
 }

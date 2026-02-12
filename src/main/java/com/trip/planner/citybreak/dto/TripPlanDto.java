@@ -1,27 +1,25 @@
 package com.trip.planner.citybreak.dto;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.List;
-
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class TripPlanDto {
     private Long id;
+    private String title;
     private Long userId;
-    private Long destinationId;
-    private List<Long> attractionIds;
+    private List<Long> destinationIds;
     private LocalDate startDate;
     private LocalDate endDate;
-    private BigDecimal minBudget;
-    private BigDecimal maxBudget;
-    private int maxAttractionsPerDay;
-    private String attractionType;
+    private BudgetDto budget;
+    private String status;
+    private String notes;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

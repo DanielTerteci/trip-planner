@@ -1,45 +1,50 @@
 package com.trip.planner.citybreak.mapper;
 
 import com.trip.planner.citybreak.dto.TripPlanDto;
-import com.trip.planner.citybreak.models.Attraction;
-import com.trip.planner.citybreak.models.Destination;
 import com.trip.planner.citybreak.models.TripPlan;
-import com.trip.planner.citybreak.models.User;
-
-import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import java.util.stream.Collectors;
 
+@Component
 public class TripPlanMapper {
-    public static TripPlanDto mapToTripPlanDto(TripPlan tripPlan) {
-        return TripPlanDto.builder()
-                .id(tripPlan.getId())
-                .userId(tripPlan.getUser().getId())
-                .destinationId(tripPlan.getDestination().getId())
-                .attractionIds(tripPlan.getAttractions()
-                        .stream()
-                        .map(Attraction::getId)
-                        .collect(Collectors.toList()))
-                .startDate(tripPlan.getStartDate())
-                .endDate(tripPlan.getEndDate())
-                .minBudget(tripPlan.getMinBudget())
-                .maxBudget(tripPlan.getMaxBudget())
-                .maxAttractionsPerDay(tripPlan.getMaxAttractionsPerDay())
-                .attractionType(tripPlan.getAttractionType())
-                .build();
+
+    @Autowired
+    private BudgetMapper budgetMapper;
+
+    public TripPlanDto toDto(TripPlan tripPlan) {
+        if (tripPlan == null) return null;
+
+        TripPlanDto dto = new TripPlanDto();
+        dto.setId(tripPlan.getId());
+        dto.setTitle(tripPlan.getTitle());
+        dto.setUserId(tripPlan.getUser() != null ? tripPlan.getUser().getId() : null);
+        dto.setDestinationIds(tripPlan.getDestinations() != null
+                ? tripPlan.getDestinations().stream()
+                .map(d -> d.getId())
+                .collect(Collectors.toList())
+                : null);
+        dto.setStartDate(tripPlan.getStartDate());
+        dto.setEndDate(tripPlan.getEndDate());
+        dto.setBudget(budgetMapper.toDto(tripPlan.getBudget()));
+        dto.setStatus(tripPlan.getStatus() != null ? tripPlan.getStatus().name() : null);
+        dto.setNotes(tripPlan.getNotes());
+        dto.setCreatedAt(tripPlan.getCreatedAt());
+        dto.setUpdatedAt(tripPlan.getUpdatedAt());
+
+        return dto;
     }
 
-    public static TripPlan mapToTripPlan(TripPlanDto tripPlanDto, User user, Destination destination, List<Attraction> attractions) {
-        return TripPlan.builder()
-                .id(tripPlanDto.getId())
-                .user(user)
-                .destination(destination)
-                .attractions(attractions)
-                .startDate(tripPlanDto.getStartDate())
-                .endDate(tripPlanDto.getEndDate())
-                .minBudget(tripPlanDto.getMinBudget())
-                .maxBudget(tripPlanDto.getMaxBudget())
-                .maxAttractionsPerDay(tripPlanDto.getMaxAttractionsPerDay())
-                .attractionType(tripPlanDto.getAttractionType())
-                .build();
+    public TripPlan toEntity(TripPlanDto dto) {
+        if (dto == null) return null;
+
+        TripPlan tripPlan = new TripPlan();
+        tripPlan.setId(dto.getId());
+        tripPlan.setTitle(dto.getTitle());
+        tripPlan.setStartDate(dto.getStartDate());
+        tripPlan.setEndDate(dto.getEndDate());
+        tripPlan.setNotes(dto.getNotes());
+
+        return tripPlan;
     }
 }

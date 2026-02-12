@@ -1,7 +1,11 @@
 package com.trip.planner.citybreak.models;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -20,15 +24,15 @@ public class Review {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "attraction_id", nullable = false)
-    private Attraction attraction;
+    @JoinColumn(name = "destination_id", nullable = false)
+    private Destination destination;
 
-    @Column(name = "rating")
-    private int rating;
+    @Column(nullable = false)
+    private Integer rating; // 1-5
 
-    @Column(name = "comment")
+    @Column(length = 2000)
     private String comment;
 
-    @Column(name = "created_at")
-    private String createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
+
 }

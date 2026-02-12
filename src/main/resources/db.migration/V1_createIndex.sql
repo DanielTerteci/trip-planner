@@ -1,0 +1,9 @@
+CREATE INDEX idx_destinations_category ON destinations(category_id);
+CREATE INDEX idx_destinations_active ON destinations(is_active);
+CREATE INDEX idx_attractions_destination ON attractions(destination_id);
+CREATE INDEX idx_attractions_type ON attractions(type);
+CREATE INDEX idx_trip_plan_user ON trip_plan(user_id);
+CREATE INDEX idx_trip_plan_status ON trip_plan(status);
+CREATE INDEX idx_reviews_destination ON reviews(destination_id);
+CREATE INDEX idx_reviews_user ON reviews(user_id);
+CREATE INDEX idx_trip_itineraries_trip ON trip_itineraries(trip_plan_id);

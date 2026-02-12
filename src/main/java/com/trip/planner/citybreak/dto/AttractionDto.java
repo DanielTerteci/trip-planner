@@ -1,20 +1,22 @@
 package com.trip.planner.citybreak.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.math.BigDecimal;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class AttractionDto {
-    private static final long serialVersionUID = 1L;
     private Long id;
     private String name;
-    private String type;
+    private Long destinationId;
+    private String destinationName;
     private String description;
-    private String destination;
-    private String location;
+    private BigDecimal entryFee;
+    private String type;
+    private String website;
+    private String openingHours;
+    private Double rating;
 }

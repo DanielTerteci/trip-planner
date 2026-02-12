@@ -8,10 +8,6 @@ import java.util.Optional;
 
 public interface CategoryRepository extends JpaRepository<Category, Long> {
     Optional<Category> findByName(String name);
-
-    List<Category> findByDescriptionContaining(String description);
-
-    List<Category> findAll();
-
-    List<Category> findByPopularityGreaterThan(int popularityThreshold);
+    List<Category> findByPopularityGreaterThanEqual(int popularity);
+    List<Category> findAllByOrderByPopularityDesc();
 }
