@@ -19,11 +19,10 @@ public class DestinationService {
 
     private final DestinationRepository destinationRepository;
     private final CategoryRepository categoryRepository;
-    private final DestinationMapper destinationMapper;
 
     @Transactional
     public DestinationDto createDestination(DestinationDto destinationDto) {
-        Destination destination = destinationMapper.toEntity(destinationDto);
+        Destination destination = DestinationMapper.toEntity(destinationDto);
 
         if (destinationDto.getCategoryId() != null) {
             Category category = categoryRepository.findById(destinationDto.getCategoryId())
@@ -33,30 +32,30 @@ public class DestinationService {
 
         destination.setIsActive(true);
         Destination saved = destinationRepository.save(destination);
-        return destinationMapper.toDto(saved);
+        return DestinationMapper.toDto(saved);
     }
 
     public DestinationDto getDestinationById(Long id) {
         Destination destination = destinationRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Destination not found"));
-        return destinationMapper.toDto(destination);
+        return DestinationMapper.toDto(destination);
     }
 
     public List<DestinationDto> getAllDestinations() {
         return destinationRepository.findByIsActiveTrue().stream()
-                .map(destinationMapper::toDto)
+                .map(DestinationMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     public List<DestinationDto> searchDestinations(String keyword) {
         return destinationRepository.searchDestinations(keyword).stream()
-                .map(destinationMapper::toDto)
+                .map(DestinationMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     public List<DestinationDto> getDestinationsByCategory(Long categoryId) {
         return destinationRepository.findByCategoryId(categoryId).stream()
-                .map(destinationMapper::toDto)
+                .map(DestinationMapper::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -78,7 +77,7 @@ public class DestinationService {
         }
 
         Destination updated = destinationRepository.save(existing);
-        return destinationMapper.toDto(updated);
+        return DestinationMapper.toDto(updated);
     }
 
     @Transactional

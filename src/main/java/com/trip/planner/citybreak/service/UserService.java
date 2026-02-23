@@ -21,7 +21,6 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final UserMapper userMapper;
 
     // Password validation pattern: minimum 8 characters and at least 2 special characters
     private static final Pattern SPECIAL_CHAR_PATTERN = Pattern.compile("[!@#$%^&*()\\-_=+\\[\\]{};:'\",.<>/?\\\\|`~]");
@@ -63,24 +62,24 @@ public class UserService {
                 .build();
 
         User savedUser = userRepository.save(user);
-        return userMapper.toDto(savedUser);
+        return UserMapper.toDto(savedUser);
     }
 
     public UserDto getUserById(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
-        return userMapper.toDto(user);
+        return UserMapper.toDto(user);
     }
 
     public UserDto getUserByEmail(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
-        return userMapper.toDto(user);
+        return UserMapper.toDto(user);
     }
 
     public List<UserDto> getAllUsers() {
         return userRepository.findAll().stream()
-                .map(userMapper::toDto)
+                .map(UserMapper::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -94,7 +93,7 @@ public class UserService {
         user.setUpdatedAt(LocalDateTime.now());
 
         User updated = userRepository.save(user);
-        return userMapper.toDto(updated);
+        return UserMapper.toDto(updated);
     }
 
     @Transactional
@@ -107,7 +106,7 @@ public class UserService {
         existing.setUpdatedAt(LocalDateTime.now());
 
         User updated = userRepository.save(existing);
-        return userMapper.toDto(updated);
+        return UserMapper.toDto(updated);
     }
 
     @Transactional

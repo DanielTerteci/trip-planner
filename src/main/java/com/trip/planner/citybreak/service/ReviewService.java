@@ -23,7 +23,6 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
     private final DestinationRepository destinationRepository;
-    private final ReviewMapper reviewMapper;
 
     @Transactional
     public ReviewDto createReview(ReviewDto reviewDto) {
@@ -46,7 +45,7 @@ public class ReviewService {
         // Update destination rating
         updateDestinationRating(destination.getId());
 
-        return reviewMapper.toDto(saved);
+        return ReviewMapper.toDto(saved);
     }
 
     private void updateDestinationRating(Long destinationId) {
@@ -64,24 +63,24 @@ public class ReviewService {
     public ReviewDto getReviewById(Long id) {
         Review review = reviewRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Review not found"));
-        return reviewMapper.toDto(review);
+        return ReviewMapper.toDto(review);
     }
 
     public List<ReviewDto> getReviewsByDestination(Long destinationId) {
         return reviewRepository.findByDestinationId(destinationId).stream()
-                .map(reviewMapper::toDto)
+                .map(ReviewMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     public List<ReviewDto> getReviewsByUser(Long userId) {
         return reviewRepository.findByUserId(userId).stream()
-                .map(reviewMapper::toDto)
+                .map(ReviewMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     public List<ReviewDto> getAllReviews() {
         return reviewRepository.findAll().stream()
-                .map(reviewMapper::toDto)
+                .map(ReviewMapper::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -98,7 +97,7 @@ public class ReviewService {
         // Update destination rating
         updateDestinationRating(existing.getDestination().getId());
 
-        return reviewMapper.toDto(updated);
+        return ReviewMapper.toDto(updated);
     }
 
     @Transactional

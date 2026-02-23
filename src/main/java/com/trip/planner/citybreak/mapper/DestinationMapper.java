@@ -2,12 +2,10 @@ package com.trip.planner.citybreak.mapper;
 
 import com.trip.planner.citybreak.dto.DestinationDto;
 import com.trip.planner.citybreak.models.Destination;
-import org.springframework.stereotype.Component;
 
-@Component
 public class DestinationMapper {
 
-    public DestinationDto toDto(Destination destination) {
+    public static DestinationDto toDto(Destination destination) {
         if (destination == null) return null;
 
         DestinationDto dto = new DestinationDto();
@@ -25,7 +23,7 @@ public class DestinationMapper {
         return dto;
     }
 
-    public Destination toEntity(DestinationDto dto) {
+    public static Destination toEntity(DestinationDto dto) {
         if (dto == null) return null;
 
         Destination destination = new Destination();

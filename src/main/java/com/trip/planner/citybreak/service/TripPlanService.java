@@ -1,6 +1,7 @@
 package com.trip.planner.citybreak.service;
 
 import com.trip.planner.citybreak.dto.TripPlanDto;
+import com.trip.planner.citybreak.mapper.BudgetMapper;
 import com.trip.planner.citybreak.mapper.TripPlanMapper;
 import com.trip.planner.citybreak.models.*;
 import com.trip.planner.citybreak.repository.*;
@@ -20,23 +21,14 @@ public class TripPlanService {
     private final TripPlanRepository tripPlanRepository;
     private final UserRepository userRepository;
     private final DestinationRepository destinationRepository;
-    private final TripPlanMapper tripPlanMapper;
 
     @Transactional
     public TripPlanDto createTripPlan(TripPlanDto tripPlanDto) {
         User user = userRepository.findById(tripPlanDto.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        TripPlan tripPlan = TripPlan.builder()
-                .title(tripPlanDto.getTitle() != null ? tripPlanDto.getTitle() : "My Trip Plan")
-                .user(user)
-                .startDate(tripPlanDto.getStartDate())
-                .endDate(tripPlanDto.getEndDate())
-                .status(TripPlan.TripStatus.DRAFT)
-                .notes(tripPlanDto.getNotes())
-                .createdAt(LocalDateTime.now())
-                .destinations(new ArrayList<>())
-                .build();
+        TripPlan tripPlan = TripPlanMapper.toEntity(tripPlanDto);
+        tripPlan.setUser(user);
 
         // Add destinations if provided
         if (tripPlanDto.getDestinationIds() != null && !tripPlanDto.getDestinationIds().isEmpty()) {
@@ -48,24 +40,24 @@ public class TripPlanService {
         }
 
         TripPlan saved = tripPlanRepository.save(tripPlan);
-        return tripPlanMapper.toDto(saved);
+        return TripPlanMapper.toDto(saved);
     }
 
     public TripPlanDto getTripPlanById(Long id) {
         TripPlan tripPlan = tripPlanRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Trip plan not found"));
-        return tripPlanMapper.toDto(tripPlan);
+        return TripPlanMapper.toDto(tripPlan);
     }
 
     public List<TripPlanDto> getTripPlansByUserId(Long userId) {
         return tripPlanRepository.findByUserId(userId).stream()
-                .map(tripPlanMapper::toDto)
+                .map(TripPlanMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     public List<TripPlanDto> getAllTripPlans() {
         return tripPlanRepository.findAll().stream()
-                .map(tripPlanMapper::toDto)
+                .map(TripPlanMapper::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -90,7 +82,7 @@ public class TripPlanService {
         }
 
         TripPlan updated = tripPlanRepository.save(existing);
-        return tripPlanMapper.toDto(updated);
+        return TripPlanMapper.toDto(updated);
     }
 
     @Transactional
@@ -110,6 +102,6 @@ public class TripPlanService {
         tripPlan.setUpdatedAt(LocalDateTime.now());
 
         TripPlan updated = tripPlanRepository.save(tripPlan);
-        return tripPlanMapper.toDto(updated);
+        return TripPlanMapper.toDto(updated);
     }
 }

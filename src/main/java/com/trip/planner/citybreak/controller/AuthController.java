@@ -36,12 +36,13 @@ public class AuthController {
         try {
             UserDto user = userService.registerUser(registerDto);
 
-            // Automatically log in after registration
-            UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
-            String token = jwtTokenProvider.generateToken(userDetails);
-
+            // Get full user entity
             User userEntity = userRepository.findByEmail(user.getEmail())
                     .orElseThrow(() -> new RuntimeException("User not found"));
+
+            // Generate token WITH userId claim
+            UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
+            String token = jwtTokenProvider.generateToken(userDetails, userEntity.getId());
 
             AuthResponse response = AuthResponse.builder()
                     .token(token)
@@ -71,13 +72,13 @@ public class AuthController {
                     )
             );
 
-            // Generate JWT token
-            UserDetails userDetails = userDetailsService.loadUserByUsername(loginDto.getEmail());
-            String token = jwtTokenProvider.generateToken(userDetails);
-
-            // Get user details
+            // Get user
             User user = userRepository.findByEmail(loginDto.getEmail())
                     .orElseThrow(() -> new RuntimeException("User not found"));
+
+            // Generate token WITH userId claim
+            UserDetails userDetails = userDetailsService.loadUserByUsername(loginDto.getEmail());
+            String token = jwtTokenProvider.generateToken(userDetails, user.getId());
 
             AuthResponse response = AuthResponse.builder()
                     .token(token)

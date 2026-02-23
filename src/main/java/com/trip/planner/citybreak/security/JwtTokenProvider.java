@@ -26,19 +26,10 @@ public class JwtTokenProvider {
     @Value("${jwt.expiration:86400000}") // 24 hours in milliseconds
     private long jwtExpiration;
 
-    /**
-     * Generate JWT token for user
-     */
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(UserDetails userDetails, Long userId) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", userId);
         return createToken(claims, userDetails.getUsername());
-    }
-
-    /**
-     * Generate token with additional claims
-     */
-    public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
-        return createToken(extraClaims, userDetails.getUsername());
     }
 
     /**
@@ -59,6 +50,25 @@ public class JwtTokenProvider {
      */
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
+    }
+
+    /**
+     * Extract userId from token
+     */
+    public Long extractUserId(String token) {
+        Claims claims = extractAllClaims(token);
+        Object userId = claims.get("userId");
+
+        if (userId == null) {
+            return null;
+        }
+
+        // Handle both Integer and Long
+        if (userId instanceof Integer) {
+            return ((Integer) userId).longValue();
+        }
+
+        return (Long) userId;
     }
 
     /**

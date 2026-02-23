@@ -2,17 +2,14 @@ package com.trip.planner.citybreak.mapper;
 
 import com.trip.planner.citybreak.dto.TripPlanDto;
 import com.trip.planner.citybreak.models.TripPlan;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
-@Component
 public class TripPlanMapper {
 
-    @Autowired
-    private BudgetMapper budgetMapper;
-
-    public TripPlanDto toDto(TripPlan tripPlan) {
+    public static TripPlanDto toDto(TripPlan tripPlan) {
         if (tripPlan == null) return null;
 
         TripPlanDto dto = new TripPlanDto();
@@ -26,7 +23,7 @@ public class TripPlanMapper {
                 : null);
         dto.setStartDate(tripPlan.getStartDate());
         dto.setEndDate(tripPlan.getEndDate());
-        dto.setBudget(budgetMapper.toDto(tripPlan.getBudget()));
+        dto.setBudget(BudgetMapper.toDto(tripPlan.getBudget()));
         dto.setStatus(tripPlan.getStatus() != null ? tripPlan.getStatus().name() : null);
         dto.setNotes(tripPlan.getNotes());
         dto.setCreatedAt(tripPlan.getCreatedAt());
@@ -35,16 +32,18 @@ public class TripPlanMapper {
         return dto;
     }
 
-    public TripPlan toEntity(TripPlanDto dto) {
-        if (dto == null) return null;
+    public static TripPlan toEntity(TripPlanDto tripPlanDto) {
+        if (tripPlanDto == null) return null;
 
-        TripPlan tripPlan = new TripPlan();
-        tripPlan.setId(dto.getId());
-        tripPlan.setTitle(dto.getTitle());
-        tripPlan.setStartDate(dto.getStartDate());
-        tripPlan.setEndDate(dto.getEndDate());
-        tripPlan.setNotes(dto.getNotes());
-
-        return tripPlan;
+        return TripPlan.builder()
+                .title(tripPlanDto.getTitle() != null ? tripPlanDto.getTitle() : "My Trip Plan")
+                .startDate(tripPlanDto.getStartDate())
+                .endDate(tripPlanDto.getEndDate())
+                .budget(BudgetMapper.toEntity(tripPlanDto.getBudget()))
+                .status(tripPlanDto.getStatus() != null ? TripPlan.TripStatus.valueOf(tripPlanDto.getStatus()) : TripPlan.TripStatus.DRAFT)
+                .notes(tripPlanDto.getNotes())
+                .createdAt(LocalDateTime.now())
+                .destinations(new ArrayList<>())
+                .build();
     }
 }

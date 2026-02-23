@@ -2,12 +2,10 @@ package com.trip.planner.citybreak.mapper;
 
 import com.trip.planner.citybreak.dto.BudgetDto;
 import com.trip.planner.citybreak.models.Budget;
-import org.springframework.stereotype.Component;
 
-@Component
 public class BudgetMapper {
 
-    public BudgetDto toDto(Budget budget) {
+    public static BudgetDto toDto(Budget budget) {
         if (budget == null) return null;
 
         BudgetDto dto = new BudgetDto();
@@ -25,7 +23,7 @@ public class BudgetMapper {
         return dto;
     }
 
-    public Budget toEntity(BudgetDto dto) {
+    public static Budget toEntity(BudgetDto dto) {
         if (dto == null) return null;
 
         Budget budget = new Budget();

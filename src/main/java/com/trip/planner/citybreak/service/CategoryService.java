@@ -16,42 +16,41 @@ import java.util.stream.Collectors;
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
-    private final CategoryMapper categoryMapper;
 
     @Transactional
     public CategoryDto createCategory(CategoryDto categoryDto) {
-        Category category = categoryMapper.toEntity(categoryDto);
+        Category category = CategoryMapper.toEntity(categoryDto);
         Category saved = categoryRepository.save(category);
-        return categoryMapper.toDto(saved);
+        return CategoryMapper.toDto(saved);
     }
 
     public CategoryDto getCategoryById(Long id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Category not found"));
-        return categoryMapper.toDto(category);
+        return CategoryMapper.toDto(category);
     }
 
     public CategoryDto getCategoryByName(String name) {
         Category category = categoryRepository.findByName(name)
                 .orElseThrow(() -> new RuntimeException("Category not found"));
-        return categoryMapper.toDto(category);
+        return CategoryMapper.toDto(category);
     }
 
     public List<CategoryDto> getAllCategories() {
         return categoryRepository.findAll().stream()
-                .map(categoryMapper::toDto)
+                .map(CategoryMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     public List<CategoryDto> getPopularCategories(int minPopularity) {
         return categoryRepository.findByPopularityGreaterThanEqual(minPopularity).stream()
-                .map(categoryMapper::toDto)
+                .map(CategoryMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     public List<CategoryDto> getCategoriesByPopularity() {
         return categoryRepository.findAllByOrderByPopularityDesc().stream()
-                .map(categoryMapper::toDto)
+                .map(CategoryMapper::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -65,7 +64,7 @@ public class CategoryService {
         existing.setPopularity(categoryDto.getPopularity());
 
         Category updated = categoryRepository.save(existing);
-        return categoryMapper.toDto(updated);
+        return CategoryMapper.toDto(updated);
     }
 
     @Transactional

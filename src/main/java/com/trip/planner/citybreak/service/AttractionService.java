@@ -19,14 +19,13 @@ public class AttractionService {
 
     private final AttractionRepository attractionRepository;
     private final DestinationRepository destinationRepository;
-    private final AttractionMapper attractionMapper;
 
     @Transactional
     public AttractionDto createAttraction(AttractionDto attractionDto, Long destinationId) {
         Destination destination = destinationRepository.findById(destinationId)
                 .orElseThrow(() -> new RuntimeException("Destination not found"));
 
-        Attraction attraction = attractionMapper.toEntity(attractionDto);
+        Attraction attraction = AttractionMapper.toEntity(attractionDto);
         attraction.setDestination(destination);
 
         if (attractionDto.getType() != null) {
@@ -34,31 +33,31 @@ public class AttractionService {
         }
 
         Attraction saved = attractionRepository.save(attraction);
-        return attractionMapper.toDto(saved);
+        return AttractionMapper.toDto(saved);
     }
 
     public AttractionDto getAttractionById(Long id) {
         Attraction attraction = attractionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Attraction not found"));
-        return attractionMapper.toDto(attraction);
+        return AttractionMapper.toDto(attraction);
     }
 
     public List<AttractionDto> getAllAttractions() {
         return attractionRepository.findAll().stream()
-                .map(attractionMapper::toDto)
+                .map(AttractionMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     public List<AttractionDto> getAttractionsByDestination(Long destinationId) {
         return attractionRepository.findByDestinationId(destinationId).stream()
-                .map(attractionMapper::toDto)
+                .map(AttractionMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     public List<AttractionDto> getAttractionsByType(String type) {
         Attraction.AttractionType attractionType = Attraction.AttractionType.valueOf(type.toUpperCase());
         return attractionRepository.findByType(attractionType).stream()
-                .map(attractionMapper::toDto)
+                .map(AttractionMapper::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -79,7 +78,7 @@ public class AttractionService {
         }
 
         Attraction updated = attractionRepository.save(existing);
-        return attractionMapper.toDto(updated);
+        return AttractionMapper.toDto(updated);
     }
 
     @Transactional

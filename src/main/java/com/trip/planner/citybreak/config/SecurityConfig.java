@@ -56,6 +56,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/destinations/**").permitAll()
                         .requestMatchers("/api/attractions/**").permitAll()
                         .requestMatchers("/api/categories/**").permitAll()
+                        .requestMatchers("/swagger-ui/**").permitAll()
+                        .requestMatchers("/v3/api-docs/**").permitAll()
 
                         // Admin only endpoints
                         .requestMatchers("/api/users/**").hasRole("ADMIN")

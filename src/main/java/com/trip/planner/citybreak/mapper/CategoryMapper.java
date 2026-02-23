@@ -2,12 +2,10 @@ package com.trip.planner.citybreak.mapper;
 
 import com.trip.planner.citybreak.dto.CategoryDto;
 import com.trip.planner.citybreak.models.Category;
-import org.springframework.stereotype.Component;
 
-@Component
 public class CategoryMapper {
 
-    public CategoryDto toDto(Category category) {
+    public static CategoryDto toDto(Category category) {
         if (category == null) return null;
 
         return CategoryDto.builder()
@@ -18,7 +16,7 @@ public class CategoryMapper {
                 .build();
     }
 
-    public Category toEntity(CategoryDto dto) {
+    public static Category toEntity(CategoryDto dto) {
         if (dto == null) return null;
 
         return Category.builder()

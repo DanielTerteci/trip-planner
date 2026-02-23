@@ -2,12 +2,10 @@ package com.trip.planner.citybreak.mapper;
 
 import com.trip.planner.citybreak.dto.ReviewDto;
 import com.trip.planner.citybreak.models.Review;
-import org.springframework.stereotype.Component;
 
-@Component
 public class ReviewMapper {
 
-    public ReviewDto toDto(Review review) {
+    public static ReviewDto toDto(Review review) {
         if (review == null) return null;
 
         return ReviewDto.builder()
@@ -20,7 +18,7 @@ public class ReviewMapper {
                 .build();
     }
 
-    public Review toEntity(ReviewDto dto) {
+    public static Review toEntity(ReviewDto dto) {
         if (dto == null) return null;
 
         return Review.builder()
