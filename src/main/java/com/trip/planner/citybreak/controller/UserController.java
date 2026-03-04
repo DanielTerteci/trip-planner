@@ -1,8 +1,10 @@
 package com.trip.planner.citybreak.controller;
 
 import com.trip.planner.citybreak.dto.UserDto;
+import com.trip.planner.citybreak.security.SecurityUtils;
 import com.trip.planner.citybreak.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,16 +17,38 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final SecurityUtils securityUtils;
 
     @GetMapping
-    public ResponseEntity<List<UserDto>> getAllUsers() {
+    public ResponseEntity<?> getAllUsers() {
+        // Only admins can view all users
+        if (!securityUtils.isAdmin()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("Access denied. Only admins can view all users.");
+        }
+
         List<UserDto> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
     }
 
-    @GetMapping("/getById/{id}")
-    public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getUserById(
+            @PathVariable Long id,
+            @RequestHeader("Authorization") String authHeader) {
         try {
+            Long userId = securityUtils.extractUserIdFromToken(authHeader);
+
+            if (userId == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body("Invalid token");
+            }
+
+            // Users can only view their own profile (unless admin)
+            if (!userId.equals(id) && !securityUtils.isAdmin()) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body("You can only view your own profile");
+            }
+
             UserDto user = userService.getUserById(id);
             return ResponseEntity.ok(user);
         } catch (RuntimeException e) {
@@ -33,7 +57,13 @@ public class UserController {
     }
 
     @GetMapping("/email/{email}")
-    public ResponseEntity<UserDto> getUserByEmail(@PathVariable String email) {
+    public ResponseEntity<?> getUserByEmail(@PathVariable String email) {
+        // Only admins can search users by email
+        if (!securityUtils.isAdmin()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("Access denied. Only admins can search users by email.");
+        }
+
         try {
             UserDto user = userService.getUserByEmail(email);
             return ResponseEntity.ok(user);
@@ -42,9 +72,42 @@ public class UserController {
         }
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
+    @GetMapping("/myProfile")
+    public ResponseEntity<?> getCurrentUser(@RequestHeader("Authorization") String authHeader) {
         try {
+            Long userId = securityUtils.extractUserIdFromToken(authHeader);
+
+            if (userId == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body("Invalid token");
+            }
+
+            UserDto user = userService.getUserById(userId);
+            return ResponseEntity.ok(user);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateUser(
+            @PathVariable Long id,
+            @RequestBody UserDto userDto,
+            @RequestHeader("Authorization") String authHeader) {
+        try {
+            Long userId = securityUtils.extractUserIdFromToken(authHeader);
+
+            if (userId == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body("Invalid token");
+            }
+
+            // Users can only update their own profile
+            if (!userId.equals(id) && !securityUtils.isAdmin()) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body("You can only update your own profile");
+            }
+
             UserDto updated = userService.updateUser(id, userDto);
             return ResponseEntity.ok(updated);
         } catch (RuntimeException e) {
@@ -53,8 +116,23 @@ public class UserController {
     }
 
     @PostMapping("/{id}/upgrade-pro")
-    public ResponseEntity<UserDto> upgradeToPro(@PathVariable Long id) {
+    public ResponseEntity<?> upgradeToPro(
+            @PathVariable Long id,
+            @RequestHeader("Authorization") String authHeader) {
         try {
+            Long userId = securityUtils.extractUserIdFromToken(authHeader);
+
+            if (userId == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body("Invalid token");
+            }
+
+            // Users can only upgrade their own account
+            if (!userId.equals(id) && !securityUtils.isAdmin()) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body("You can only upgrade your own account");
+            }
+
             UserDto upgraded = userService.upgradeToPro(id);
             return ResponseEntity.ok(upgraded);
         } catch (RuntimeException e) {
@@ -62,8 +140,14 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+        // Only admins can delete users
+        if (!securityUtils.isAdmin()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("Access denied. Only admins can delete users.");
+        }
+
         try {
             userService.deleteUser(id);
             return ResponseEntity.noContent().build();

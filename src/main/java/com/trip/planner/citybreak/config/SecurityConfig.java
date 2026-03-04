@@ -4,6 +4,7 @@ import com.trip.planner.citybreak.security.JwtAuthFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -49,21 +50,20 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> cors.disable()) // Configure CORS properly in production
+                .cors(cors -> cors.disable())
                 .authorizeHttpRequests(auth -> auth
                         // Public endpoints
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/destinations/**").permitAll()
-                        .requestMatchers("/api/attractions/**").permitAll()
-                        .requestMatchers("/api/categories/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/destinations/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/attractions/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
 
-                        // Admin only endpoints
-                        .requestMatchers("/api/users/**").hasRole("ADMIN")
+                        //All other /api/** require authentication ONLY
+                        .requestMatchers("/api/**").authenticated()
 
-                        // All other endpoints require authentication
-                        .anyRequest().authenticated()
+                        .anyRequest().denyAll()
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
