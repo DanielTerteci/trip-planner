@@ -17,4 +17,5 @@ public class UserDto {
     private LocalDateTime subscriptionExpiry;
     private LocalDateTime createdAt;
     private boolean isPro;
+    private boolean darkMode;
 }

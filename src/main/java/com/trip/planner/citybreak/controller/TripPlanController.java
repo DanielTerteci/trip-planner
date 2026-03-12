@@ -13,7 +13,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/trip-plans")
 @RequiredArgsConstructor
-@CrossOrigin
 public class TripPlanController {
 
     private final TripPlanService tripPlanService;

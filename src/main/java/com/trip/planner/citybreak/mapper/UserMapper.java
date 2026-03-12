@@ -2,7 +2,6 @@ package com.trip.planner.citybreak.mapper;
 
 import com.trip.planner.citybreak.dto.UserDto;
 import com.trip.planner.citybreak.models.User;
-import org.springframework.stereotype.Component;
 
 public class UserMapper {
 
@@ -18,6 +17,7 @@ public class UserMapper {
         dto.setSubscriptionExpiry(user.getSubscriptionExpiry());
         dto.setCreatedAt(user.getCreatedAt());
         dto.setPro(user.isPro());
+        dto.setDarkMode(user.getDarkMode() != null ? user.getDarkMode() : false);
 
         return dto;
     }
@@ -30,6 +30,7 @@ public class UserMapper {
         user.setEmail(dto.getEmail());
         user.setFirstName(dto.getFirstName());
         user.setLastName(dto.getLastName());
+        user.setDarkMode(user.getDarkMode() != null ? user.getDarkMode() : false);
 
         return user;
     }

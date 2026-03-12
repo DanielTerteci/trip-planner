@@ -1,6 +1,9 @@
 package com.trip.planner.citybreak.controller;
 
 import com.trip.planner.citybreak.dto.UserDto;
+import com.trip.planner.citybreak.mapper.UserMapper;
+import com.trip.planner.citybreak.models.User;
+import com.trip.planner.citybreak.repository.UserRepository;
 import com.trip.planner.citybreak.security.SecurityUtils;
 import com.trip.planner.citybreak.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -8,16 +11,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
+@CrossOrigin
 public class UserController {
 
     private final UserService userService;
     private final SecurityUtils securityUtils;
+    private final UserRepository userRepository;
 
     @GetMapping
     public ResponseEntity<?> getAllUsers() {
@@ -155,4 +160,23 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @PatchMapping("/{id}/dark-mode")
+    public ResponseEntity<UserDto> updateDarkMode(
+            @PathVariable Long id,
+            @RequestParam Boolean darkMode) {
+        try {
+            User user = userRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            user.setDarkMode(darkMode);
+            user.setUpdatedAt(LocalDateTime.now());
+
+            User updated = userRepository.save(user);
+            return ResponseEntity.ok(UserMapper.toDto(updated));
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 }
